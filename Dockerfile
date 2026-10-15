@@ -17,8 +17,14 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Storage permissions
+# 1. Pehle poora code container ke andar copy karein
+COPY . /var/www/html
+
+# 2. Yeh sabse mukhya line hai: Docker khud-b-khud dependencies install kar lega!
+RUN composer install --no-dev --optimize-autoloader
+
+# 3. Storage folders ko permissions dein
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Default command to start server
+# 4. Server start karne ki command
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
